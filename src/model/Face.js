@@ -1,0 +1,20 @@
+"use strict";
+exports.__esModule = true;
+exports.Face = void 0;
+var Face;
+(function (Face) {
+    Face[Face["Ace"] = 1] = "Ace";
+    Face[Face["Two"] = 2] = "Two";
+    Face[Face["Three"] = 3] = "Three";
+    Face[Face["Four"] = 4] = "Four";
+    Face[Face["Five"] = 5] = "Five";
+    Face[Face["Six"] = 6] = "Six";
+    Face[Face["Seven"] = 7] = "Seven";
+    Face[Face["Eight"] = 8] = "Eight";
+    Face[Face["Nine"] = 9] = "Nine";
+    Face[Face["Ten"] = 10] = "Ten";
+    Face[Face["Jack"] = 11] = "Jack";
+    Face[Face["Queen"] = 12] = "Queen";
+    Face[Face["King"] = 13] = "King";
+    Face[Face["Ace_Max"] = 14] = "Ace_Max";
+})(Face = exports.Face || (exports.Face = {}));
