@@ -9,7 +9,7 @@ var DeckService = /** @class */ (function () {
     function DeckService() {
         this.deck = new Array();
         this.build();
-        this.deal();
+        this.get();
     }
     DeckService.prototype.build = function () {
         for (var _i = 0, _a = EnumUtils_1.EnumUtils.getKeys(Suite_1.Suite); _i < _a.length; _i++) {
@@ -22,7 +22,7 @@ var DeckService = /** @class */ (function () {
             }
         }
     };
-    DeckService.prototype.deal = function () {
+    DeckService.prototype.get = function () {
         return this.deck;
     };
     return DeckService;

@@ -2,7 +2,7 @@ import { CardEvaluator } from './CardEvaluator';
 import { Card } from '../model/Card';
 import { Suite } from '../model/Suite';
 import { Face } from '../model/Face';
-import { PokerHandRanks } from '../model/PokerHandRanks';
+import { PokerHandScore } from '../model/PokerHandScore';
 
 describe('CardEvaluator', () => {
 
@@ -173,6 +173,51 @@ describe('CardEvaluator', () => {
     })
   })
 
+  describe("Check for full house", () => {
+    it ("for two three of a kind", () => {
+      let cards = [
+        new Card(Suite.Clubs, Face.Ace),
+        new Card(Suite.Diamonds, Face.Ace),
+        new Card(Suite.Hearts, Face.Ace),
+        new Card(Suite.Clubs, Face.Queen),
+        new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Hearts, Face.Queen),
+        new Card(Suite.Spades, Face.King),
+      ]
+      let result = CardEvaluator.getBestFive(cards)
+      expect(result.bestFiveCards).toStrictEqual([
+        new Card(Suite.Clubs, Face.Ace_Max),
+        new Card(Suite.Diamonds, Face.Ace_Max),
+        new Card(Suite.Hearts, Face.Ace_Max),
+        new Card(Suite.Clubs, Face.Queen),
+        new Card(Suite.Diamonds, Face.Queen),
+      ])
+    })
+  })
+
+  describe("Check for Two Pair", () => {
+    it ("for cards with 3 two pairs", () => {
+      let cards = [
+        new Card(Suite.Clubs, Face.Ace),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Diamonds, Face.Ace),
+        new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Spades, Face.King),
+        new Card(Suite.Clubs, Face.Queen),
+        new Card(Suite.Hearts, Face.Nine),
+      ]
+      let result = CardEvaluator.getBestFive(cards)
+      console.log(result)
+      expect(result.bestFiveCards).toStrictEqual([
+        new Card(Suite.Clubs, Face.Ace_Max),
+        new Card(Suite.Diamonds, Face.Ace_Max),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Spades, Face.King),
+        new Card(Suite.Diamonds, Face.Queen),
+      ])
+    })
+  })
+
   describe('Check N of a kind', () => {
 
     it ('4 of a kind', () => {
@@ -219,7 +264,7 @@ describe('CardEvaluator', () => {
         new Card(Suite.Diamonds, Face.Two),
         new Card(Suite.Hearts, Face.King),
         new Card(Suite.Spades, Face.Ace),
-        new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Clubs, Face.Two),
         new Card(Suite.Diamonds, Face.Eight),
         new Card(Suite.Spades, Face.Queen),
       ]
@@ -252,24 +297,24 @@ describe('CardEvaluator', () => {
       ]
       let result = CardEvaluator.getBestFive(cards)
       expect(result.bestFiveCards).toStrictEqual([
-        new Card(Suite.Diamonds, Face.Ace),
-        new Card(Suite.Diamonds, Face.Two),
-        new Card(Suite.Diamonds, Face.Three),
-        new Card(Suite.Spades, Face.Three),
-        new Card(Suite.Diamonds, Face.Four),
-        new Card(Suite.Clubs, Face.Four),
-        new Card(Suite.Diamonds, Face.Five)
+        new Card(Suite.Diamonds, Face.Ace_Max),
+        new Card(Suite.Diamonds, Face.King),
+        new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Diamonds, Face.Jack),
+        new Card(Suite.Diamonds, Face.Ten),
       ])
       expect(result.score).toBe(60)
-      expect(result.hand).toBe(PokerHandRanks[PokerHandRanks.StraightFlush])
+      expect(result.hand).toBe(PokerHandScore.StraightFlush)
     })
 
     it ("for Straight Flush with duplicates", () => {
       let cards = [
         new Card(Suite.Diamonds, Face.Ace),
         new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Clubs, Face.Two),
         new Card(Suite.Diamonds, Face.Three),
         new Card(Suite.Diamonds, Face.Four),
+        new Card(Suite.Spades, Face.Four),
         new Card(Suite.Diamonds, Face.Five)
       ]
       let result = CardEvaluator.getBestFive(cards)
@@ -281,10 +326,89 @@ describe('CardEvaluator', () => {
         new Card(Suite.Diamonds, Face.Ace)
       ])
       expect(result.score).toBe(15)
-      expect(result.hand).toBe(PokerHandRanks[PokerHandRanks.StraightFlush])
+      expect(result.hand).toBe(PokerHandScore.StraightFlush)
     })
 
 
+  })
+
+  describe("Check sortByBestHandDesc", () => {
+    it ("for different hands", () => {
+      let royalFlush = [
+        new Card(Suite.Diamonds, Face.Ace),
+        new Card(Suite.Diamonds, Face.King),
+        new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Spades, Face.Queen),
+        new Card(Suite.Diamonds, Face.Jack),
+        new Card(Suite.Clubs, Face.Jack),
+        new Card(Suite.Diamonds, Face.Ten)
+      ]
+      let straightFlush = [
+        new Card(Suite.Diamonds, Face.Ace),
+        new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Clubs, Face.Two),
+        new Card(Suite.Diamonds, Face.Three),
+        new Card(Suite.Diamonds, Face.Four),
+        new Card(Suite.Spades, Face.Four),
+        new Card(Suite.Diamonds, Face.Five)
+      ]
+      let straight = [
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Spades, Face.Jack),
+        new Card(Suite.Diamonds, Face.Jack),
+        new Card(Suite.Hearts, Face.Ten),
+        new Card(Suite.Clubs, Face.Nine),
+        new Card(Suite.Clubs, Face.Ace),
+      ]
+      let flush = [
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Diamonds, Face.Five),
+        new Card(Suite.Diamonds, Face.Ace),
+        new Card(Suite.Diamonds, Face.Nine),
+        new Card(Suite.Diamonds, Face.Eight),
+        new Card(Suite.Diamonds, Face.King),
+      ]
+      let fourOfAKind = [
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Diamonds, Face.King),
+        new Card(Suite.Diamonds, Face.Eight),
+        new Card(Suite.Spades, Face.King),
+      ]
+      let threeOfAKind = [
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Diamonds, Face.King),
+        new Card(Suite.Diamonds, Face.Eight),
+        new Card(Suite.Spades, Face.Queen),
+      ]
+      let twoOfAKind = [
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Diamonds, Face.Eight),
+        new Card(Suite.Spades, Face.Queen),
+      ];
+      let highCard = [
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Two),
+        new Card(Suite.Hearts, Face.Jack),
+        new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Diamonds, Face.Seven),
+        new Card(Suite.Diamonds, Face.Eight),
+        new Card(Suite.Spades, Face.Queen),
+      ];
+      expect(CardEvaluator.sortByBestHandDesc([threeOfAKind, highCard, twoOfAKind, fourOfAKind, flush, straight, straightFlush, royalFlush])).toStrictEqual(
+        [royalFlush, straightFlush, fourOfAKind, flush, straight, threeOfAKind, twoOfAKind, highCard])
+    })
   })
 
 });

@@ -2,13 +2,15 @@ import { Card } from '../model/Card'
 import { Suite } from '../model/Suite'
 import { Face } from '../model/Face'
 import { EnumUtils } from '../Utils/EnumUtils'
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class DeckService {
 
-    deck: Array<Card>
+    deck: Set<Card>
 
     constructor() {
-        this.deck = []
+        this.deck = new Set<Card>()
         this.build()
     }
 
@@ -16,13 +18,13 @@ export class DeckService {
         for (let suite of EnumUtils.getKeys(Suite)) {
             for (let face of EnumUtils.getNumberValues(Face)) {
                 if (face !== Face.Ace_Max) {
-                    this.deck.push(new Card(suite, face))
+                    this.deck.add(new Card(suite, face))
                 }
             }
         }
     }
     
-    deal() {
+    get() {
         return this.deck;
     }
 

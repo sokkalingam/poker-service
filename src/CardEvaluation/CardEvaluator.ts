@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import { Card } from '../model/Card';
 import { Face } from '../model/Face';
-import { PokerHandRanks } from '../model/PokerHandRanks';
+import { PokerHandScore } from '../model/PokerHandScore';
+import { Collection } from '@nestjs/cli/lib/schematics';
 
 type handCondition = ((card1:Card, card2:Card) => boolean)
 type cardArrPair = { arr1: Array<Card>, arr2: Array<Card> }
-type bestFiveResult = { bestFiveCards: Array<Card>, score: number, hand: string }
+type bestFiveResult = { bestFiveCards: Array<Card>, score: number, hand: number }
 
 export class CardEvaluator {
 
@@ -18,30 +19,29 @@ export class CardEvaluator {
     })
     static nOfAKindConditionFilter = ((cardOne: Card, cardTwo: Card) => cardOne.face === cardTwo.face)
 
-    static pokerHandChecks = [
-        'getStraightFlush',
-        'getFourOfAKind',
-        'getFullHouse',
-        'getFlush',
-        'getStraight',
-        'getThreeOfAKind',
-        'getTwoPair',
-        'getPair',
-        'getHighCard',
-    ];
-
-    static rankMap = new Map<string, PokerHandRanks>([
-        ['getStraightFlush', PokerHandRanks.StraightFlush],
-        ['getFourOfAKind', PokerHandRanks.FourOfAKind],
-        ['getFullHouse', PokerHandRanks.FullHouse],
-        ['getFlush', PokerHandRanks.Flush],
-        ['getStraight', PokerHandRanks.Straight],
-        ['getThreeOfAKind', PokerHandRanks.ThreeOfAKind],
-        ['getTwoPair', PokerHandRanks.TwoPair],
-        ['getPair', PokerHandRanks.OnePair],
-        ['getHighCard', PokerHandRanks.HighCard],
+    static rankMap = new Map<string, PokerHandScore>([
+        ['getStraightFlush', PokerHandScore.StraightFlush],
+        ['getFourOfAKind', PokerHandScore.FourOfAKind],
+        ['getFullHouse', PokerHandScore.FullHouse],
+        ['getFlush', PokerHandScore.Flush],
+        ['getStraight', PokerHandScore.Straight],
+        ['getThreeOfAKind', PokerHandScore.ThreeOfAKind],
+        ['getTwoPair', PokerHandScore.TwoPair],
+        ['getPair', PokerHandScore.OnePair],
+        ['getHighCard', PokerHandScore.HighCard],
       ])
 
+    public static sortByBestHandDesc(listOfCards: Array<Array<Card>>): Array<Array<Card>> {
+        let result = [...listOfCards]
+        result.sort((cards1, cards2) => {
+            let bestFiveObj1 = this.getBestFive(cards1)
+            let bestFiveObj2 = this.getBestFive(cards2)
+            let compare = bestFiveObj2.hand - bestFiveObj1.hand
+            if (compare != 0) return compare
+            return bestFiveObj2.score - bestFiveObj1.score
+        })
+        return result
+    }
 
     static sortBySuiteAscFaceDesc(cards: Array<Card>): Array<Card> {
         return cards.sort((a, b) => {
@@ -68,14 +68,13 @@ export class CardEvaluator {
                     return {
                         bestFiveCards: result,
                         score: this.getScore(result),
-                        hand: PokerHandRanks[handRank]
+                        hand: handRank
                     }
                 }
             }
         }
 
     }
-
 
     static addMaxAces(cards: Array<Card>) {
         for (let card of cards) {

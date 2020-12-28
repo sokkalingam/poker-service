@@ -28,7 +28,7 @@ export class AppController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get("/deck")
-  getDeck(): Array<any> {
-    return this.deckService.deal();
+  getDeck(): Set<Card> {
+    return this.deckService.get();
   }
 }

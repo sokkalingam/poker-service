@@ -22,4 +22,8 @@ export class Card {
         return cardOne.face === cardTwo.face && cardOne.suite === cardTwo.suite
     }
 
+    public toString(): string {
+        return `Suite: ${this.suite}, Face: ${this.face}`
+    }
+
 }
