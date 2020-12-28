@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DealerService } from './DealerService';
-import { DeckService } from '../Deck/DeckService';
-import { CardEvaluator } from '../CardEvaluation/CardEvaluator';
+import { DeckService } from '../deck/DeckService';
+import { CardEvaluator } from '../cardEvaluation/CardEvaluator';
 
 describe('DealerService', () => {
   let dealerService: DealerService;

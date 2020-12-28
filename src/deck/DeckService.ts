@@ -1,7 +1,7 @@
 import { Card } from '../model/Card'
 import { Suite } from '../model/Suite'
 import { Face } from '../model/Face'
-import { EnumUtils } from '../Utils/EnumUtils'
+import { EnumUtils } from '../utils/EnumUtils'
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

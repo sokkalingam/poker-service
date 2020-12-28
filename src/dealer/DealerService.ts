@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AppService } from '../app.service';
-import { DeckService } from '../Deck/DeckService';
+import { DeckService } from '../deck/DeckService';
 import { Card } from '../model/Card';
 
 type PlayerCards = [Card, Card]

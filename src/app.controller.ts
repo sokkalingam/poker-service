@@ -1,7 +1,7 @@
 import { ClassSerializerInterceptor, Controller, Get, UseInterceptors } from '@nestjs/common';
 import { AppService } from './app.service';
-import { DeckService } from './Deck/DeckService';
-import { CardEvaluator } from './CardEvaluation/CardEvaluator';
+import { DeckService } from './deck/DeckService';
+import { CardEvaluator } from './cardEvaluation/CardEvaluator';
 import { Card } from './model/Card';
 import { Suite } from './model/Suite';
 import { Face } from './model/Face';

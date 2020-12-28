@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DeckService } from './Deck/DeckService';
+import { DeckService } from './deck/DeckService';
 import { WebSocketService } from './websocket/Websocket.service';
 
 @Module({
