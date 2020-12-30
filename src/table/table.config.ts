@@ -1,0 +1,4 @@
+export let TableConfig = {
+  TABLE_ID_LOWER_BOUND: 1000,
+  TABLE_ID_UPPER_BOUND: 9999
+}

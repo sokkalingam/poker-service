@@ -88,6 +88,7 @@ describe('CardEvaluator', () => {
         new Card(Suite.Hearts, Face.Nine),
         new Card(Suite.Clubs, Face.Eight),
         new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Spades, Face.Two),
       ]
       expect(CardEvaluator.getStraight(cards)).toStrictEqual([
         new Card(Suite.Clubs, Face.Queen),
@@ -173,48 +174,73 @@ describe('CardEvaluator', () => {
     })
   })
 
-  describe("Check for full house", () => {
-    it ("for two three of a kind", () => {
+  describe('Check for Full House', () => {
+    it ('for cards with 2 three of a kind', () => {
       let cards = [
-        new Card(Suite.Clubs, Face.Ace),
-        new Card(Suite.Diamonds, Face.Ace),
-        new Card(Suite.Hearts, Face.Ace),
-        new Card(Suite.Clubs, Face.Queen),
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Diamonds, Face.King),
+        new Card(Suite.Hearts, Face.Queen),
+        new Card(Suite.Spades, Face.Queen),
+      ]
+      expect(CardEvaluator.getFullHouse(cards)).toStrictEqual([
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Diamonds, Face.King),
         new Card(Suite.Diamonds, Face.Queen),
         new Card(Suite.Hearts, Face.Queen),
-        new Card(Suite.Spades, Face.King),
-      ]
-      let result = CardEvaluator.getBestFive(cards)
-      expect(result.bestFiveCards).toStrictEqual([
-        new Card(Suite.Clubs, Face.Ace_Max),
-        new Card(Suite.Diamonds, Face.Ace_Max),
-        new Card(Suite.Hearts, Face.Ace_Max),
-        new Card(Suite.Clubs, Face.Queen),
-        new Card(Suite.Diamonds, Face.Queen),
       ])
+
     })
+
+    it ('for cards with no full house', () => {
+      let cards = [
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Diamonds, Face.King),
+        new Card(Suite.Hearts, Face.Jack),
+        new Card(Suite.Spades, Face.Ten),
+      ]
+      expect(CardEvaluator.getFullHouse(cards)).toStrictEqual([])
+    })
+
   })
 
-  describe("Check for Two Pair", () => {
+  describe ("Check for two pair", () => {
     it ("for cards with 3 two pairs", () => {
       let cards = [
-        new Card(Suite.Clubs, Face.Ace),
-        new Card(Suite.Hearts, Face.King),
-        new Card(Suite.Diamonds, Face.Ace),
+        new Card(Suite.Clubs, Face.King),
         new Card(Suite.Diamonds, Face.Queen),
-        new Card(Suite.Spades, Face.King),
-        new Card(Suite.Clubs, Face.Queen),
-        new Card(Suite.Hearts, Face.Nine),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Diamonds, Face.Jack),
+        new Card(Suite.Hearts, Face.Queen),
+        new Card(Suite.Spades, Face.Jack),
       ]
-      let result = CardEvaluator.getBestFive(cards)
-      console.log(result)
-      expect(result.bestFiveCards).toStrictEqual([
-        new Card(Suite.Clubs, Face.Ace_Max),
-        new Card(Suite.Diamonds, Face.Ace_Max),
+      expect(CardEvaluator.getTwoPair(cards)).toStrictEqual([
+        new Card(Suite.Clubs, Face.King),
         new Card(Suite.Hearts, Face.King),
-        new Card(Suite.Spades, Face.King),
         new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Hearts, Face.Queen),
+        new Card(Suite.Spades, Face.Ace_Max),
       ])
+    })
+
+    it ('for cards with no two pairs', () => {
+      let cards = [
+        new Card(Suite.Clubs, Face.King),
+        new Card(Suite.Diamonds, Face.Queen),
+        new Card(Suite.Hearts, Face.King),
+        new Card(Suite.Spades, Face.Ace),
+        new Card(Suite.Diamonds, Face.Ten),
+        new Card(Suite.Hearts, Face.Jack),
+        new Card(Suite.Spades, Face.Nine),
+      ]
+      expect(CardEvaluator.getFullHouse(cards)).toStrictEqual([])
     })
   })
 
@@ -277,11 +303,6 @@ describe('CardEvaluator', () => {
       ])
     })
   })
-
-  /**
-   * Test Full house
-   * - Call with 2 three of a kind (6 cards) + 1 random
-   */
 
   describe("Check getBestFive", () => {
 

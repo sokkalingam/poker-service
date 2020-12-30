@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { Card } from '../model/Card';
 import { Face } from '../model/Face';
 import { PokerHandScore } from '../model/PokerHandScore';
-import { Collection } from '@nestjs/cli/lib/schematics';
 
 type handCondition = ((card1:Card, card2:Card) => boolean)
 type cardArrPair = { arr1: Array<Card>, arr2: Array<Card> }

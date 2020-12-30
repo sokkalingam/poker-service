@@ -6,7 +6,7 @@ import { Card } from './model/Card';
 import { Suite } from './model/Suite';
 import { Face } from './model/Face';
 
-@Controller()
+@Controller("app")
 export class AppController {
   constructor(private readonly appService: AppService,
     private readonly deckService: DeckService) {}
@@ -27,7 +27,7 @@ export class AppController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get("/deck")
+  @Get("deck")
   getDeck(): Set<Card> {
     return this.deckService.get();
   }
