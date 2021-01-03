@@ -6,13 +6,13 @@ import { Card } from './model/Card';
 import { Suite } from './model/Suite';
 import { Face } from './model/Face';
 
-@Controller("app")
+@Controller()
 export class AppController {
   constructor(private readonly appService: AppService,
     private readonly deckService: DeckService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get()
+  @Get("/test")
   getHello(): Array<Card> {
     const cards = [
       new Card(Suite.Hearts, Face.King),
@@ -27,7 +27,7 @@ export class AppController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get("deck")
+  @Get()
   getDeck(): Set<Card> {
     return this.deckService.get();
   }
