@@ -1,0 +1,4 @@
+export let PlayerConfig = {
+  PLAYER_ID_LOWER_BOUND: 1000,
+  PLAYER_ID_UPPER_BOUND: 99999
+}

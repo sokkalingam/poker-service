@@ -1,7 +1,11 @@
+import { Player } from './Player';
+
 export class TableRequest {
   name: string
   maxPlayersCount: number
-  smallBlindAmount: number
-  bigBlindAmount: number
+  smallBlind: number
+  bigBlind: number
   buyInAmount: number
+  reBuyInAmount: number
+  hostedBy: Player
 }
