@@ -20,6 +20,10 @@ export class TableService {
     this.tableMap = new Map<string, Table>()
   }
 
+  getTable(tableId: string): Table {
+    return this.tableMap.get(tableId);
+  }
+
   getNewTable(input: TableRequest, client: Socket, server: Server): { tableId: string } {
     let tableId = TableUtils.generateTableId(this.tableMap)
     tableId = "100"
@@ -35,10 +39,10 @@ export class TableService {
     this.validateInputs(input)
     let table = this.tableMap.get(input.tableId)
     let newPlayer = SocketUtils.getPlayer(client)
-    TableUtils.addPlayerToTable(table, newPlayer)
+    TableUtils.setupPlayer(table, newPlayer)
     SocketUtils.setTableId(client, table.id)
     console.log(`Player ${newPlayer.name} joined table ${table.id}`)
-    TableService._joinRoom(input, client, server)
+    TableService._joinRoom(table, client, server)
     table.players.filter(pl => pl.status === PlayerStatus.Active).forEach((pl) => console.log(pl.name))
     return "Joined Table " + input.tableId
   }
@@ -50,7 +54,7 @@ export class TableService {
     let table = this.tableMap.get(tableId);
     TableUtils.markPlayerAsInactive(table, player.id)
     TableUtils.removeTableIfEmpty(table, this.tableMap)
-    TableService._leaveRoom({tableId, player}, client, server)
+    TableService._leaveRoom(table, client, server)
     console.log(`Player ${player?.name} left table ${tableId}`)
     return `Player ${player?.name} left the table ${table?.id}`
   }
@@ -61,16 +65,16 @@ export class TableService {
     }
   }
 
-  private static _joinRoom(input: { tableId: string }, client: Socket, server: Server) {
-    let room = TableUtils.getRoomName(input.tableId)
+  private static _joinRoom(table: Table, client: Socket, server: Server) {
+    let room = TableUtils.getRoomName(table.id)
     client.join(room)
-    server.to(room).emit("tableUpdates", `Player ${SocketUtils.getPlayer(client).name} joined the table`)
+    server.to(room).emit("waitingRoom", { "players": table.players })
   }
 
-  private static _leaveRoom(input: { tableId: string, player: Player }, client: Socket, server: Server) {
-    let room = TableUtils.getRoomName(input.tableId)
+  private static _leaveRoom(table: Table, client: Socket, server: Server) {
+    let room = TableUtils.getRoomName(table.id)
     client.leave(room)
-    server.to(room).emit("tableUpdates", `Player ${input.player.name} left the table`)
+    server.to(room).emit("waitingRoom", { "players": table.players })
   }
 
 }

@@ -3,7 +3,7 @@ import { TableConfig } from './table.config';
 import { Table } from '../model/Table';
 import { TableRequest } from '../model/TableRequest';
 import { Player } from '../model/Player';
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PlayerStatus } from '../model/PlayerStatus';
 
 export class TableUtils {
@@ -61,4 +61,24 @@ export class TableUtils {
       console.log(`Removed empty/inactive table ${table.id}`)
     }
   }
+
+  static setupPlayer(table: Table, player: Player) {
+    TableUtils.addPlayerToTable(table, player)
+    player.cashInHand = table.buyInAmount
+    player.cashBorrowed = table.buyInAmount
+  }
+
+  static validateTableForGameStart(table: Table) {
+    this.validateIsTable(table)
+    if (table.players.length < 2) {
+      throw new ForbiddenException(`Cannot start a game, need at least 2 players`)
+    }
+  }
+
+  static validateIsTable(table: Table) {
+    if (!table) {
+      throw new NotFoundException(`Cannot start game, table ${table.id} was not found`)
+    }
+  }
+
 }

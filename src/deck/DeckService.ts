@@ -25,7 +25,7 @@ export class DeckService {
     }
     
     get() {
-        return this.deck;
+        return [...this.deck];
     }
 
 }

@@ -1,14 +1,14 @@
 import { Card } from './Card';
 import { Player } from './Player';
 import { TableRequest } from './TableRequest';
+import { Game } from './Game';
 
 export class Table extends TableRequest {
   id: string
   activePlayersCount: number
-  tableCards: Array<Card>
   players: Array<Player>
-  pot: number
   createdAt: Date
+  game: Game
 
   constructor(id: string, tableRequest: TableRequest) {
     super();
@@ -22,8 +22,6 @@ export class Table extends TableRequest {
     this.reBuyInAmount = tableRequest.reBuyInAmount
     this.hostedBy = tableRequest.hostedBy
     this.activePlayersCount = 0
-    this.tableCards = []
     this.players = []
-    this.pot = 0
   }
 }

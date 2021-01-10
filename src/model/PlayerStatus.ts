@@ -1,4 +1,4 @@
 export enum PlayerStatus {
-  Active,
-  Inactive
+  Inactive,
+  Active
 }

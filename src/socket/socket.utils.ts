@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import _ from 'lodash';
 import { Player } from '../model/Player';
+import { PlayerService } from '../player/player.service';
 
 export class SocketUtils {
 
@@ -18,7 +19,7 @@ export class SocketUtils {
     return _.get(client, ["conn", "data", "tableId"])
   }
 
-  static setPlayer(client: Socket, player: { id: string, name: string }) {
+  static setPlayer(client: Socket, player: Player) {
     return _.set(client, ["conn", "data", "player"], player)
   }
 
@@ -28,5 +29,29 @@ export class SocketUtils {
 
   static getSocketId(client: Socket): string {
     return _.get(client, ["conn", "id"])
+  }
+
+  static handleConnection(client: Socket, playerService: PlayerService) {
+    if (!SocketUtils._checkPlayerInfo(client)) {
+      client.emit('exception', "Cannot accept socket connection - query data does not contain id")
+      client.disconnect(true)
+    } else {
+      let player = SocketUtils.getPlayer(client)
+      playerService.addToPlayerSocketMap(player.id, client)
+      console.log(`OnConnect: ${JSON.stringify(player)}`, new Date())
+      SocketUtils.keepAlive(client)
+    }
+  }
+
+  private static _checkPlayerInfo(client: Socket): boolean {
+    let playerId = client.handshake.query?.id
+    let playerName = client.handshake.query?.name
+    if (!playerId) return false
+    SocketUtils.setPlayer(client, new Player(playerId, playerName))
+    return true
+  }
+
+  private static keepAlive(client: Socket) {
+    setInterval(() => client.emit('ping'), 10000)
   }
 }

@@ -9,9 +9,11 @@ import { SocketUtils } from '../socket/socket.utils';
 export class PlayerService {
 
   playerMap: Map<string, Player>
+  playerSocketMap: Map<string, Socket>
 
   constructor() {
     this.playerMap = new Map<string, Player>()
+    this.playerSocketMap = new Map<string, Socket>()
   }
 
   getNewPlayer(input: {id: string, name: string}, client: Socket): Player {
@@ -23,11 +25,16 @@ export class PlayerService {
     return player
   }
 
-  getPlayerFromMap(playerId: string): Player {
-    return this.playerMap.get(playerId)
+  addToPlayerSocketMap(id: string, socket: Socket) {
+    this.playerSocketMap.set(id, socket)
   }
 
-  removePlayer(playerId: string): boolean {
-    return this.playerMap.delete(playerId)
+  getFromPlayerSocketMap(id: string): Socket {
+    return this.playerSocketMap.get(id)
   }
+
+  removeFromPlayerSocketMap(id: string) {
+    this.playerSocketMap.delete(id)
+  }
+
 }

@@ -13,6 +13,7 @@ import { SocketUtils } from '../socket/socket.utils';
 import { Server, Socket } from 'socket.io';
 import { PlayerService } from '../player/player.service';
 import _ from 'lodash';
+import { GameService } from '../game/game.service';
 
 @WebSocketGateway({ namespace: "table" })
 export class TableGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -21,7 +22,8 @@ export class TableGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   server: Server
 
   constructor(private readonly tableService: TableService,
-              private readonly playerService: PlayerService) {
+              private readonly playerService: PlayerService,
+              private readonly gameService: GameService) {
   }
 
   afterInit(server: Server) {
@@ -29,14 +31,8 @@ export class TableGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    if (!TableGateway._hasPlayerInfo(client)) {
-      client.emit('exception', "Cannot accept socket connection - query data does not contain id")
-      client.disconnect(true)
-    } else {
-      console.log(`TableGateway::OnConnect: ${JSON.stringify(SocketUtils.getPlayer(client))}`, new Date())
-      TableGateway.ping(client)
-      client.on('disconnecting', () => this._handleDisconnect(client))
-    }
+    SocketUtils.handleConnection(client, this.playerService);
+    client.on('disconnecting', () => this._handleDisconnect(client, this.playerService))
   }
 
   handleDisconnect(client: Socket) {
@@ -71,20 +67,19 @@ export class TableGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
   }
 
-  private _handleDisconnect(client: Socket) {
+  @SubscribeMessage("startGame")
+  startGame(@Body() input: { tableId: string }) {
+    this.gameService.startGame(input, this.server)
+  }
+
+  @SubscribeMessage("gameInput")
+  gameInput(@Body() input: {}, client: Socket) {
+    this.gameService.playerInput(input, client)
+  }
+
+  private _handleDisconnect(client: Socket, playerService: PlayerService) {
     this.tableService.leaveTable(client, this.server)
-  }
-
-  private static _hasPlayerInfo(client: Socket): boolean {
-    let playerId = client.handshake.query?.id
-    let playerName = client.handshake.query?.name
-    if (!playerId || !playerName) return false
-    SocketUtils.setPlayer(client, {id: playerId, name: playerName})
-    return true
-  }
-
-  private static ping(client: Socket) {
-    setInterval(() => client.emit('ping'), 10000)
+    this.playerService.removeFromPlayerSocketMap(SocketUtils.getPlayer(client).id)
   }
 
 }

@@ -11,7 +11,7 @@ export class DealerService {
   constructor(private readonly deckService: DeckService) {}
 
   deal(numOfPlayers: number) {
-    let cards = [...this.deckService.get()]
+    let cards = this.deckService.get()
     let numOfCardsNeeded = (numOfPlayers * 2) + 5
     let selectedCards = DealerService._getRandomCards(cards, numOfCardsNeeded)
     return DealerService._getCardsForPlayerAndTable(selectedCards, numOfPlayers)
@@ -38,7 +38,7 @@ export class DealerService {
     return [...selectedCardsSet]
   }
 
-  private static _getCardsForPlayerAndTable(cards: Array<Card>, numOfPlayers: number) {
+  private static _getCardsForPlayerAndTable(cards: Array<Card>, numOfPlayers: number): { allPlayerCards: Array<Array<Card>>, tableCards: Array<Card> } {
     let allPlayerCards = []
     let i = 0
     while(i < numOfPlayers * 2) {
